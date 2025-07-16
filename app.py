@@ -4,36 +4,29 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 import io
 import base64
-from flask_cors import CORS # Thêm dòng này
+from flask_cors import CORS 
 
 app = Flask(__name__)
-CORS(app) # Thêm dòng này để cho phép tất cả các nguồn gốc truy cập
+CORS(app) 
 
-# Hoặc nếu bạn muốn chỉ cho phép một nguồn gốc cụ thể (an toàn hơn trong môi trường production):
-# CORS(app, resources={r"/predict": {"origins": "http://127.0.0.1:5500"}})
-
-# Load pre-trained model (ensure 'mnist.h5' is in the same directory)
-# Đảm bảo bạn đã có file 'mnist.h5' trong cùng thư mục với script Flask
 try:
     model = load_model("mnist.h5")
     print("MNIST model loaded successfully!")
 except Exception as e:
     print(f"Error loading model: {e}")
     print("Please make sure 'mnist.h5' is in the same directory.")
-    exit() # Thoát nếu không thể tải model
+    exit()
 
-# Preprocessing function for base64 image input
 def preprocess_image(image_data):
-    # Loại bỏ tiền tố "data:image/png;base64," nếu có
+
     if "base64," in image_data:
         image_data = image_data.split("base64,")[1]
 
-    # Decode base64 to bytes
     image_bytes = base64.b64decode(image_data)
-    image = Image.open(io.BytesIO(image_bytes)).convert('L')  # Convert to grayscale
+    image = Image.open(io.BytesIO(image_bytes)).convert('L')  #
     image = image.resize((28, 28))
     image_array = np.array(image).astype("float32") / 255.0
-    image_array = image_array.reshape(1, 28, 28, 1) # Thêm kênh cuối cùng cho Tensorflow/Keras
+    image_array = image_array.reshape(1, 28, 28, 1) 
     return image_array
 
 @app.route("/predict", methods=["POST"])
@@ -48,7 +41,7 @@ def predict():
         predicted_digit = int(np.argmax(predictions))
         return jsonify({"prediction": predicted_digit})
     except Exception as e:
-        print(f"Prediction error: {e}") # In lỗi ra console của backend
+        print(f"Prediction error: {e}") 
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
