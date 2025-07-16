@@ -45,5 +45,4 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    # Đảm bảo Flask lắng nghe trên địa chỉ 127.0.0.1 (localhost)
     app.run(debug=True, host='127.0.0.1', port=5000)
