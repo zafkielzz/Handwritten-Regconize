@@ -1,24 +1,63 @@
-<!DOCTYPE html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nhận diện chữ số viết tay (MNIST)</title>
+import React, { useEffect, useRef } from 'react';
+import { useCanvasContext } from './CanvasContext';
 
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main class="app-container">
-      <h1>Nhận diện chữ số viết tay</h1>
-      <canvas id="canvas" width="280" height="280"></canvas>
-      <div class="controls">
-        <button id="clear-btn">Xóa</button>
-        <button id="predict-btn">Dự đoán</button>
-        <button id="download-btn">Tải ảnh</button>
-      </div>
-      <div id="result">Hãy vẽ một số vào ô trên</div>
-    </main>
+function Canvas() {
+  const canvasRef = useRef(null);
+  const { setCanvasRef } = useCanvasContext();
+  let drawing = false;
 
-    <script src="script.js" defer></script>
-  </body>
-</html>
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 20;
+    ctx.lineCap = 'round';
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setCanvasRef(canvas);
+  }, [setCanvasRef]);
+
+  const getMousePos = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const scaleX = canvasRef.current.width / rect.width;
+    const scaleY = canvasRef.current.height / rect.height;
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+  };
+
+  const handleMouseDown = (e) => {
+    drawing = true;
+    const ctx = canvasRef.current.getContext('2d');
+    const pos = getMousePos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!drawing) return;
+    const ctx = canvasRef.current.getContext('2d');
+    const pos = getMousePos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  };
+
+  const handleMouseUpOrLeave = () => {
+    drawing = false;
+  };
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={280}
+      height={280}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUpOrLeave}
+      onMouseLeave={handleMouseUpOrLeave}
+    />
+  );
+}
+
+export default Canvas;
