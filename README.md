@@ -13,6 +13,7 @@ This is a simple web application that allows users to draw digits (0–9) using 
 ##  Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript (Canvas API)
+- **Library:** React
 - **Backend:** Python (Flask or FastAPI)
 - **Model:** Trained using [Tensorflow]
 - **Data:** MNIST Handwritten Digits Dataset
