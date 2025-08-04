@@ -12,7 +12,7 @@ This is a simple web application that allows users to draw digits (0–9) using 
 
 ##  Tech Stack
 
-- **Frontend:** HTML, CSS, JavaScript (Canvas API)
+- **Frontend:** CSS, JavaScript (Canvas API)
 -  **Library:** React
 - **Backend:** Python (Flask)
 - **Model:** Trained using [Tensorflow]
